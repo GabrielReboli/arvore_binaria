@@ -97,30 +97,22 @@ class ArvoreBinaria:
 
     def contar_nos_nao_folhas(self):
         """Conta o número de nós não-folhas na árvore."""
-        _, nos_nao_folhas = self._contar_nos_e_nos_nao_folhas(self.raiz)
-        return nos_nao_folhas
-    
-    def _contar_nos_e_nos_nao_folhas(self, no_atual):
-        """Função recursiva que conta apenas os nós não-folhas."""
+        return self._contar_nos_nao_folhas_recursivo(self.raiz)
+
+    def _contar_nos_nao_folhas_recursivo(self, no_atual):
+        """Função recursiva para contar os nós não-folhas."""
         if no_atual is None:
-            return 0, 0  # Sem nó, não conta nada
+            return 0  # Se o nó não existe, não conta
 
-        # Contagem das subárvores esquerda e direita
-        nao_folhas_esquerda = self._contar_nos_e_nos_nao_folhas(no_atual.esquerda)[1]
-        nao_folhas_direita = self._contar_nos_e_nos_nao_folhas(no_atual.direita)[1]
+        # Conta o nó atual se ele não for folha (tem pelo menos um filho)
+        nao_folhas = 0
+        if no_atual.esquerda or no_atual.direita:
+            nao_folhas = 1
 
-        # Verificar se o nó atual é não-folha (tem pelo menos um filho)
-        nos_nao_folhas = 0
-        if no_atual.esquerda or no_atual.direita:  # Verifica ambos os lados
-            nos_nao_folhas = 1
+        # Conta os nós não-folhas das subárvores esquerda e direita
+        return nao_folhas + self._contar_nos_nao_folhas_recursivo(no_atual.esquerda) + self._contar_nos_nao_folhas_recursivo(no_atual.direita)
 
-        # Soma os nós não-folhas das subárvores
-        nos_nao_folhas += nao_folhas_esquerda + nao_folhas_direita
-
-        return 0, nos_nao_folhas  # Não precisamos contar o total de nós, só os não-folhas
-
-
-    def destacar_busca(self, valor):
+    def localizar(self, valor):
         """Procura um valor e destaca ele na árvore, se encontrado."""
         encontrado = self.buscar(valor)  # Usa a função de busca já existente
         if encontrado:
@@ -130,27 +122,55 @@ class ArvoreBinaria:
             print(f"Valor {valor} NÃO encontrado na árvore!")
             self.desenhar_arvore()  # Mostra a árvore normal
 
+    def excluir(self, valor):
+        """Remove um nó da árvore mantendo-a ordenada."""
+        self.raiz = self._excluir_recursivo(self.raiz, valor)
 
+    def _excluir_recursivo(self, no_atual, valor):
+        """Função recursiva para remover um nó da árvore."""
+        if no_atual is None:
+            return None  # Valor não encontrado, nada a remover
 
-# Criando a árvore binária e inserindo valores
+        if valor < no_atual.valor:
+            no_atual.esquerda = self._excluir_recursivo(no_atual.esquerda, valor)
+        elif valor > no_atual.valor:
+            no_atual.direita = self._excluir_recursivo(no_atual.direita, valor)
+        else:
+            # Caso 1: Nó folha
+            if no_atual.esquerda is None and no_atual.direita is None:
+                return None  # Remove o nó
+
+            # Caso 2: Apenas um filho
+            if no_atual.esquerda is None:
+                return no_atual.direita  # Retorna o filho direito
+            elif no_atual.direita is None:
+                return no_atual.esquerda  # Retorna o filho esquerdo
+
+            # Caso 3: Dois filhos
+            sucessor = self._encontrar_minimo(no_atual.direita)
+            no_atual.valor = sucessor.valor  # Copia o valor do sucessor
+            no_atual.direita = self._excluir_recursivo(no_atual.direita, sucessor.valor)  # Remove o sucessor
+
+        return no_atual  # Retorna o nó atualizado
+
+    def _encontrar_minimo(self, no):
+        """Encontra o menor valor em uma subárvore."""
+        while no.esquerda is not None:
+            no = no.esquerda
+        return no
+    
+
+# Exemplo de uso
 arvore = ArvoreBinaria()
-arvore.inserir(50)
-arvore.inserir(30)
-arvore.inserir(70)
-arvore.inserir(20)
-arvore.inserir(40)
-arvore.inserir(60)
-arvore.inserir(80)
+valores = [50, 30, 70, 20, 40, 60, 80, 81, 110, 55, 37]
+for v in valores:
+    arvore.inserir(v)
 
-# Testando a contagem de nós
-total_nos = arvore.contar_nos()
-print(f"Total de nós na árvore: {total_nos}")
+arvore.desenhar_arvore()
 
-# Testando a contagem de nós não-folhas
-total_nao_folhas = arvore.contar_nos_nao_folhas()
-print(f"Total de nós não-folhas: {total_nao_folhas}")
+print("Quantidade de nós:", arvore.contar_nos())
 
-
+print("Quantidade de nós não-folhas:", arvore.contar_nos_nao_folhas())
 
 
 
