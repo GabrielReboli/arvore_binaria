@@ -9,7 +9,7 @@
 # Para realizar a instalação das bibliotecas é necessario usar o instalador de 
 # pacotes PIP usando o comando $ pip install "respectivas bibliotecas"
 #
-# Prof.: 
+# Prof.: Jairo Lucas de Moraes
 #
 
 import networkx as nx
