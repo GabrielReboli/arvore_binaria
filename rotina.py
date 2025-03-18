@@ -2,6 +2,7 @@
 
 import networkx as nx
 import matplotlib.pyplot as plt
+from tkinter import Tk, Label, Entry, Button, Text, Scrollbar, Frame, messagebox
 
 class No:
     def __init__(self, valor):
@@ -160,17 +161,101 @@ class ArvoreBinaria:
         return no
     
 
-# Exemplo de uso
-arvore = ArvoreBinaria()
-valores = [50, 30, 70, 20, 40, 60, 80, 81, 110, 55, 37]
-for v in valores:
-    arvore.inserir(v)
+# Interface Gráfica
+class InterfaceGrafica:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Árvore Binária de Pesquisa")
+        self.arvore = ArvoreBinaria()
 
-arvore.desenhar_arvore()
+        # Definir tamanho inicial da janela
+        self.root.geometry("952x532")  # Largura x Altura
 
-print("Quantidade de nós:", arvore.contar_nos())
+        # Frame para entrada de dados
+        frame_entrada = Frame(root)
+        frame_entrada.pack(pady=10)
 
-print("Quantidade de nós não-folhas:", arvore.contar_nos_nao_folhas())
+        # Frame para entrada de dados
+        frame_entrada = Frame(root)
+        frame_entrada.pack(pady=10)
 
+        Label(frame_entrada, text="Valor:").grid(row=0, column=0, padx=5)
+        self.entrada_valor = Entry(frame_entrada, width=10)
+        self.entrada_valor.grid(row=0, column=1, padx=5)
+
+        Button(frame_entrada, text="Inserir", command=self.inserir).grid(row=0, column=2, padx=5)
+        Button(frame_entrada, text="Excluir", command=self.excluir).grid(row=0, column=3, padx=5)
+        Button(frame_entrada, text="Buscar", command=self.buscar).grid(row=0, column=4, padx=5)
+        Button(frame_entrada, text="Contar Nós", command=self.contar_nos).grid(row=0, column=5, padx=5)
+        Button(frame_entrada, text="Contar Nós Não Folhas", command=self.contar_nos_nao_folhas).grid(row=0, column=6, padx=5)
+        
+
+        # Frame para exibição de informações
+        frame_info = Frame(root)
+        frame_info.pack(pady=10)
+
+        self.texto_info = Text(frame_info, height=20, width=108, font=("Arial", 12, "bold"))
+        self.texto_info.pack(side="left", fill="y")
+
+        scrollbar = Scrollbar(frame_info, command=self.texto_info.yview)
+        scrollbar.pack(side="right", fill="y")
+        self.texto_info.config(yscrollcommand=scrollbar.set)
+
+        # Botão para desenhar a árvore
+        Button(root, text="Desenhar Árvore", command=self.desenhar_arvore).pack(pady=10)
+
+    def contar_nos(self):
+        self.atualizar_info(f"Total de nós: {self.arvore.contar_nos()}.")
+
+    def contar_nos_nao_folhas(self):
+        self.atualizar_info(f"Total de nós não folhas: {self.arvore.contar_nos_nao_folhas()}.")
+
+    def inserir(self):
+        valor = self.entrada_valor.get()
+        if valor:
+            try:
+                valor = int(valor)
+                self.arvore.inserir(valor)
+                self.atualizar_info(f"Valor {valor} inserido com sucesso!")
+            except ValueError:
+                messagebox.showerror("Erro", "Por favor, insira um número válido.")
+        else:
+            messagebox.showerror("Erro", "Por favor, insira um valor.")
+
+    def excluir(self):
+        valor = self.entrada_valor.get()
+        if valor:
+            try:
+                valor = int(valor)
+                self.arvore.excluir(valor)
+                self.atualizar_info(f"Valor {valor} excluído com sucesso!")
+            except ValueError:
+                messagebox.showerror("Erro", "Por favor, insira um número válido.")
+        else:
+            messagebox.showerror("Erro", "Por favor, insira um valor.")
+
+    def buscar(self):
+        valor = self.entrada_valor.get()
+        if valor:
+            try:
+                valor = int(valor)
+                self.arvore.localizar(valor)
+            except ValueError:
+                messagebox.showerror("Erro", "Por favor, insira um número válido.")
+        else:
+            messagebox.showerror("Erro", "Por favor, insira um valor.")
+
+    def desenhar_arvore(self):
+        self.arvore.desenhar_arvore()
+
+    def atualizar_info(self, mensagem):
+        self.texto_info.insert("end", mensagem + "\n")
+        self.texto_info.see("end")
+
+# Inicialização da interface gráfica
+if __name__ == "__main__":
+    root = Tk()
+    app = InterfaceGrafica(root)
+    root.mainloop()
 
 
