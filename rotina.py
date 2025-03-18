@@ -283,6 +283,65 @@ class InterfaceGrafica:
 
         self.texto_info = Text(frame_info, height=15, width=70, font=("Arial", 12))
         self.texto_info.pack(side="left", fill="y")
-
+        scrollbar = Scrollbar(frame_info, command=self.texto_info.yview)
+         scrollbar.pack(side="right", fill="y")
+         self.texto_info.config(yscrollcommand=scrollbar.set)
+ 
+         # Botão para desenhar a árvore
+         Button(root, text="Desenhar Árvore", command=self.desenhar_arvore).pack(pady=10)
+ 
+     def contar_nos(self):
+         self.atualizar_info(f"Total de nós: {self.arvore.contar_nos()}.")
+ 
+     def contar_nos_nao_folhas(self):
+         self.atualizar_info(f"Total de nós não folhas: {self.arvore.contar_nos_nao_folhas()}.")
+ 
+     def inserir(self):
+         valor = self.entrada_valor.get()
+         if valor:
+             try:
+                 valor = int(valor)
+                 self.arvore.inserir(valor)
+                 self.atualizar_info(f"Valor {valor} inserido com sucesso!")
+             except ValueError:
+                 messagebox.showerror("Erro", "Por favor, insira um número válido.")
+         else:
+             messagebox.showerror("Erro", "Por favor, insira um valor.")
+ 
+     def excluir(self):
+         valor = self.entrada_valor.get()
+         if valor:
+             try:
+                 valor = int(valor)
+                 self.arvore.excluir(valor)
+                 self.atualizar_info(f"Valor {valor} excluído com sucesso!")
+             except ValueError:
+                 messagebox.showerror("Erro", "Por favor, insira um número válido.")
+         else:
+             messagebox.showerror("Erro", "Por favor, insira um valor.")
+ 
+     def buscar(self):
+         valor = self.entrada_valor.get()
+         if valor:
+             try:
+                 valor = int(valor)
+                 self.arvore.localizar(valor)
+             except ValueError:
+                 messagebox.showerror("Erro", "Por favor, insira um número válido.")
+         else:
+             messagebox.showerror("Erro", "Por favor, insira um valor.")
+ 
+     def desenhar_arvore(self):
+         self.arvore.desenhar_arvore()
+ 
+     def atualizar_info(self, mensagem):
+         self.texto_info.insert("end", mensagem + "\n")
+         self.texto_info.see("end")
+ 
+ # Inicialização da interface gráfica
+ if __name__ == "__main__":
+     root = Tk()
+     app = InterfaceGrafica(root)
+     root.mainloop()
 
 
