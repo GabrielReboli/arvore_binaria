@@ -6,6 +6,8 @@
 # utiliza as bibliotecas `networkx` e `matplotlib` para a visualização da árvore
 # e `tkinter` para a interface gráfica.
 #
+# Para realizar a instalação das bibliotecas é necessario usar o instalador de 
+# pacotes PIP usando o comando $ pip install "respectivas bibliotecas"
 #
 # Prof.: 
 #
